@@ -7,4 +7,4 @@ For this analysis, we will investigate the Los Angeles Angels’ launch speeds a
 
 Our initial research finds that Albert Pujols hits the ball the hardest (~86.2 miles per hour average) on the Angels since late March of 2018 even if he is nowhere close to teammate Mike Trout’s current playing level. Early on in his career, Albert Pujols’ combination of contact and power made him into Barry Bonds prototype sans steroids. Over the last three seasons, Albert hasn’t put up the same numbers with age and slowing reflexes.
 
-Read Here: 
+Read Here: https://beyondtheaverage.wordpress.com/2019/06/15/does-albert-pujols-really-hit-the-ball-the-hardest-on-the-angels/
