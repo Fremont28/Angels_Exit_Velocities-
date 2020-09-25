@@ -1,3 +1,4 @@
+#import libraries 
 library(rvest)
 library(readr)
 library(dplyr)
@@ -6,17 +7,17 @@ library(BayesFactor)
 library(pgirmess)
 library(infer)
 
-#import data 
+#import csv file 
 exit0=read.csv("exit0.csv")
 exit1=exit0[complete.cases(exit0),]
-
 levels(exit1$player_name) 
 
+#summary statistics 
 avg_launch=ddply(exit1, .(player_name), summarize,  launch_speed=mean(launch_speed))
 avg_launch[order(avg_launch$launch_speed,avg_launch$player_name),]
 table(exit1$player_name)
 
-#top launch_speed 
+#top launch_speed (mph) 
 top_launch <- exit1 %>%
   select(launch_speed, player_name) %>% 
   transmute(launch_speed=launch_speed, player_name = player_name) %>%
@@ -27,8 +28,6 @@ top_launch <- exit1 %>%
                             "Rene Rivera","Zack Cozart")) %>%
   mutate_if(is.character, as.factor) %>%
   droplevels
-
-head(top_launch) 
 
 top_launch$player_name <- forcats::fct_reorder(top_launch$player_name, top_launch$launch_speed)
 
@@ -45,12 +44,9 @@ top_launch %>%
 #parametric mean testing unequal variances
 t.test(top_launch$launch_speed)
 
-# MANOVA test (differences between players?)
+# MANOVA test (differences in launch speed between players?)
 exit_diff<- aov(launch_speed~player_name, data = top_launch)
-summary(exit_diff) 
-
 tuk=TukeyHSD(exit_diff)
-tuk 
 plot(tuk)
 
 #dot plot launch speed 
@@ -61,18 +57,15 @@ ggplot(top_launch, aes(x=player_name, y=launch_speed)) +
 #non-parametric rank testing 
 kruskal.test(launch_speed~player_name,data=top_launch) #p<0.0008
 
-#bayesian testing (differnces means) 
+#bayesian testing (differences between means) 
 levels(top_launch$player_name)
 summary(aov(launch_speed~player_name,data=top_launch)) #anova 
-
 bf=anovaBF(launch_speed~player_name,data=top_launch)
 plot(bf) 
 
-
-#5/31/19 Does Shohei Ohtani Really Have the Fastest Launch Speed on the Angels?
+#quality check player launch speed metrics 
 top_launch1=exit1 %>%
   mutate(launch_spd=exit1$launch_speed)
-
 top_launch1
 
 n_distinct(top_launch1$player_name) #43
@@ -88,8 +81,7 @@ dirty=merge(cnt1,avg_launch,by="player_name")
 dirty=subset(dirty,n_rec>=200)
 write.csv(dirty,file="rumm.csv")
 
-
-#distribution of At bats by player?
+#distribution of At bats by player
 ggplot(cnt, aes(n_rec)) +
   geom_histogram(binwidth = 50, fill = "lightblue", colour = "black") +
   xlab(NULL) +
@@ -203,6 +195,3 @@ king <- cnt2 %>%
 ggplot(king, aes(launch_speed, fill = player_name)) + 
   geom_histogram(bins=45,alpha = 0.5, aes(y = ..density..), position = 'identity')+
   xlab("Launch Speed")+ylab("density")
-
-
-
